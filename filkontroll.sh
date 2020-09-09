@@ -2,7 +2,7 @@
 
 
 FILNAVN=$1
-EXISTS=false
+exists=false
 
 
 declare -i TIDSINTERVALL=$2
@@ -15,28 +15,28 @@ if [ "$TIDSINTERVALL" -lt 1 ]; then
 fi
 
 
-if [ -f "$FILNAVN" ]; then
+if [ -e "$FILNAVN" ]; then
     echo "$FILNAVN finnes allerede."
-    EXISTS=true
-    LASTMODIFIED=$(stat -c %Y "$FILNAVN")
-    echo "Sist endret: $LASTMODIFIED"
+    exists=true
+    last_modified=$(stat -c %Y "$FILNAVN")
+    # echo "Sist endret: $last_modified"
 else
     echo "$FILNAVN finnes ikke."
 fi
 
 while true; do
-    if [ "$EXISTS" = true ]; then
-        if [ ! -f "$FILNAVN" ]; then
+    if [ "$exists" = true ]; then
+        if [ ! -e "$FILNAVN" ]; then
             echo "Filen $FILNAVN ble slettet."
-            EXISTS=false
-        elif [ ! "$LASTMODIFIED" = "$(stat -c %Y "$FILNAVN")" ]; then
+            exists=false
+        elif [ ! "$last_modified" = "$(stat -c %Y "$FILNAVN")" ]; then
             echo "Filen $FILNAVN ble oppdatert."
-            LASTMODIFIED=$(stat -c %Y "$FILNAVN")
+            last_modified=$(stat -c %Y "$FILNAVN")
         fi
-    elif [ -f "$FILNAVN" ]; then
+    elif [ -e "$FILNAVN" ]; then
         echo "Filen $FILNAVN ble opprettet."
-        EXISTS=true
-        LASTMODIFIED=$(stat -c %Y "$FILNAVN")
+        exists=true
+        last_modified=$(stat -c %Y "$FILNAVN")
     fi
     sleep "$TIDSINTERVALL"
 done
